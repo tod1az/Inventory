@@ -6,5 +6,7 @@ export default defineSchema({
     reference: v.string(),
     name: v.string(),
     stock: v.optional(v.number()),
+  }).searchIndex("search_name", {
+    searchField: "name",
   }),
 });
