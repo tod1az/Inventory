@@ -6,8 +6,10 @@ import { references, type Reference } from "../lib/data";
 
 export default function ProductList() {
   const [reference, setReference] = useState<Reference>();
+  const [query, setQuery] = useState("");
   const dbProducts = useQuery(api.products.getWithFilters, {
-    reference: reference,
+    reference,
+    query,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -15,6 +17,17 @@ export default function ProductList() {
   };
   return (
     <section className="flex flex-col gap-6 items-center justify-center">
+      <h1 className="text-6xl">Productos</h1>
+      <form
+        action={(formData) => {
+          setQuery(formData.get("query") as string);
+        }}
+      >
+        <label htmlFor="" className="flex gap-2 ">
+          Buscar
+          <input type="text" name="query" className="bg-slate-600" />
+        </label>
+      </form>
       <select
         onChange={handleChange}
         value={reference}
@@ -31,8 +44,7 @@ export default function ProductList() {
           );
         })}
       </select>
-      <h1 className="text-6xl">Products</h1>
-      <section className="w-[40rem]">
+      <section className="w-[40rem] flex flex-col justify-center">
         <header className="px-2 grid grid-cols-5 justify-between">
           <h1>Reference</h1>
           <p>|</p>
@@ -53,6 +65,8 @@ export default function ProductList() {
               <h3>{product.stock}</h3>
             </article>
           ))
+        ) : dbProducts?.length === 0 ? (
+          <h1>Sin registros</h1>
         ) : (
           <h1>Loading...</h1>
         )}
