@@ -42,7 +42,11 @@ export const getWithFilters = query({
     const result: Product[] = [];
 
     if (query) {
-      const queryResults = await ctx.db.query("products").collect();
+      const queryResults = await ctx.db
+        .query("products")
+        .withSearchIndex("search_name", (q) => q.search("name", query))
+        .collect();
+      result.push(...queryResults);
     }
     if (reference) {
       const referenceResult = await ctx.db
@@ -51,6 +55,7 @@ export const getWithFilters = query({
         .collect();
       result.push(...referenceResult);
     }
+
     return result;
   },
 });
